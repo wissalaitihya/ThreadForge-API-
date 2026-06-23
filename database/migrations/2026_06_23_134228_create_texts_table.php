@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blueprints', function (Blueprint $table) {
+        Schema::create('texts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('tone');
-            $table->unsignedTinyInteger('max_hashtags')->default(1);
-            $table->unsignedSmallInteger('max_words')->default(100);
-            $table->text('regle_supp')->nullable();
+            $table->foreignId('blueprint_id')->constrained()->cascadeOnDelete();
+            $table->longText('content');
+            $table->enum('status', ['pending', 'processing', 'done', 'failed'])->default('pending');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blueprints');
+        Schema::dropIfExists('texts');
     }
 };
