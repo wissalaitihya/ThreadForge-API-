@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete(); 
+            $table->foreignId('text_id')->constrained('texts')->cascadeOnDelete();
             $table->string('hook_propose',280)->nullable();
             $table->json('body_points')->nullable();
             $table->unsignedTinyInteger('technical_readability_score')->nullable();
