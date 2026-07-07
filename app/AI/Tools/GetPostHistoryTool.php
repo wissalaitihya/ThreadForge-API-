@@ -6,13 +6,10 @@ use App\Models\Post;
 
 class GetPostHistoryTool
 {
-   
     public function getPostHistory(int $postId): array
     {
-        // Find the post with its related text
         $post = Post::with('text')->find($postId);
 
-        // If not found return a clear message
         if (!$post) {
             return ['error' => "Post {$postId} not found"];
         }

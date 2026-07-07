@@ -8,12 +8,14 @@ use App\Http\Requests\ChatMessageRequest;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Post;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class ConversationController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * @group Agent
      * Send a message to the Ghostwriter Agent about a specific post.
