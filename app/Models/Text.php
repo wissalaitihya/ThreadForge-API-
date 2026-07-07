@@ -19,7 +19,7 @@ class Text extends Model
 
     public function blueprint()
     {
-        return $this->belongTo(Blueprint::class);
+        return $this->belongsTo(Blueprint::class);
     }
 
      public function post()

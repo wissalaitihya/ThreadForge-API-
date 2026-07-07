@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     protected $fillable = [
-        'user_id',
+        'text_id',
         'hook_propose',
         'body_points',
         'technical_readability_score',
@@ -27,11 +27,11 @@ class Post extends Model
 
     public function user()
     {
-        return $this->belongTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function text()
     {
-        return $this->belongTo(Text::class);
+        return $this->belongsTo(Text::class);
     }
 }

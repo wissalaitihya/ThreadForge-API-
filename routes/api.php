@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlueprintController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\TextController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
