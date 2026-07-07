@@ -8,15 +8,12 @@ class GetCampaignRulesTool
 {
     public function getCampaignRules(int $blueprintId): array
     {
-        // Find the blueprint in the DB
         $blueprint = Blueprint::find($blueprintId);
 
-        // If not found return a clear message
         if (!$blueprint) {
             return ['error' => "Blueprint {$blueprintId} not found"];
         }
 
-        // Return only the style rules
         return [
             'name'           => $blueprint->name,
             'tone'           => $blueprint->tone,
