@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlueprintController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ConversationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -22,4 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts', [PostController::class, 'index']);
     Route::get('/posts/{post}', [PostController::class, 'show']);
     Route::patch('/posts/{post}/status', [PostController::class, 'updateStatus']);
+
+    Route::post('/posts/{post}/chat',    [ConversationController::class, 'chat']);
+Route::get('/posts/{post}/chat',     [ConversationController::class, 'history']);
 });
