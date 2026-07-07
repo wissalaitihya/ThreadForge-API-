@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Blueprint extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'name',
         'tone',
         'max_hashtags',
-        'max_words',
+        'max_characters',
         'regle_supp'
     ];
 

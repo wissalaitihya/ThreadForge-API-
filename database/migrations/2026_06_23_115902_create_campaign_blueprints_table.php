@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('tone');
             $table->unsignedTinyInteger('max_hashtags')->default(1);
-            $table->unsignedSmallInteger('max_words')->default(100);
+            $table->unsignedSmallInteger('max_characters')->default(280);
             $table->text('regle_supp')->nullable();
             $table->timestamps();
         });
