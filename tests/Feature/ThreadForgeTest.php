@@ -31,9 +31,7 @@ test('login returns a token with valid credentials', function () {
 });
 
 test('login returns 401 with invalid credentials', function () {
-    $user = User::factory()->create([
-        'password' => bcrypt('password123'),
-    ]);
+    $user = User::factory()->create(['password' => bcrypt('password123'),]);
 
     $response = $this->postJson('/api/login', [
         'email'    => $user->email,
