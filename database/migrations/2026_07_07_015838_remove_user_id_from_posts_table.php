@@ -14,6 +14,7 @@ return new class extends Migration
     {
         if (Schema::hasColumn('posts', 'user_id') && DB::getDriverName() !== 'sqlite') {
             Schema::table('posts', function (Blueprint $table) {
+                $table->dropForeign(['user_id']);
                 $table->dropColumn('user_id');
             });
         }
