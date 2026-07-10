@@ -1,58 +1,94 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ThreadForge API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+AI-powered content repurposing API for tech creators on X (Twitter). Submit raw content, have it processed by Groq AI (LLaMA 3.3-70B) into structured social media posts, and iterate via an AI chat agent with tool-calling capabilities.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Blueprint System** — Define reusable campaign rules (tone, hashtags, character limits)
+- **AI Content Repurposing** — Async queue job sends content to Groq AI and generates structured posts (hook, body points, hashtags, readability score)
+- **Ghostwriter Chat Agent** — Conversational AI agent that can reference blueprint rules and post history to help refine posts
+- **Post Lifecycle** — Manage posts through draft → posted → archived stages
+- **Sanctum Auth** — Token-based authentication for API access
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP ^8.3
+- Composer
+- MySQL (or SQLite for testing)
+- Node.js & npm
+- [Groq API key](https://console.groq.com) (free tier available)
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Installation
 
 ```bash
-composer require laravel/boost --dev
+# Automated setup
+composer run-script setup
 
-php artisan boost:install
+# Or manually:
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm install && npm run build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Configure your `.env` file:
+```
+DB_DATABASE=threadforge
+GROQ_API_KEY=gsk_your_key_here
+QUEUE_CONNECTION=database
+```
 
-## Contributing
+## Running
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer run dev
+```
 
-## Code of Conduct
+This launches the Laravel dev server, queue worker, log viewer, and Vite dev server concurrently.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## API Endpoints
 
-## Security Vulnerabilities
+### Public
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/register` | Register a new user |
+| `POST` | `/api/login` | Login and get a token |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Protected (Bearer Token)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/logout` | Revoke current token |
+| `GET/POST` | `/api/blueprints` | List / Create blueprints |
+| `GET/PUT/DELETE` | `/api/blueprints/{id}` | View / Update / Delete a blueprint |
+| `POST` | `/api/content/repurpose` | Submit raw content for AI processing |
+| `GET` | `/api/content` | List submitted content |
+| `GET` | `/api/content/{id}` | View content with its generated post |
+| `GET` | `/api/posts` | List generated posts |
+| `GET` | `/api/posts/{id}` | View a post |
+| `PATCH` | `/api/posts/{id}/status` | Update post status |
+| `POST` | `/api/posts/{id}/chat` | Chat with Ghostwriter about a post |
+| `GET` | `/api/posts/{id}/chat` | Get conversation history |
 
-## License
+## Testing
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+composer test
+```
+
+Uses SQLite in-memory database. No external API calls — the Groq API is not called during tests.
+
+## Architecture
+
+```
+User → API Routes → Controllers → FormRequests (validation)
+                                    → Policies (authorization)
+                                    → Queue Job → Groq API → Post (draft)
+                                    → Chat Agent → Groq API + Tool Calling
+```
+
+Content repurposing runs asynchronously via Laravel's database queue. The Ghostwriter chat agent uses Groq's function-calling API with tools: `GetCampaignRulesTool` and `GetPostHistoryTool`.
+
+## CI
+
+GitHub Actions workflow runs tests on push to `main`/`develop` and PRs to `main`.
